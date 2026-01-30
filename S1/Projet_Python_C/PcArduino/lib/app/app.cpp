@@ -2,11 +2,13 @@
 #include "../button/button.h"
 #include <string.h>
 #include <unistd.h>
+#include <cstdlib>
 
 int seuil_temp = 25;
 int led_state = 0;
 int serial_fd = -1;
 int arduino_fd = -1;
+int current_temperature = 0;
 
 void init_interface() {
     initscr();              // Initialise ncurses
@@ -83,6 +85,28 @@ void show_main_menu() {
     }
 }
 
+int read_arduino_temperature() {
+    if (arduino_fd == -1) return -1;
+    
+    // Keep reading until buffer is empty to get the latest temperature
+    unsigned char buffer[64];
+    int n;
+    int latest_temp = -1;
+    
+    while ((n = read(arduino_fd, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[n] = '\0';
+        char* line = (char*)buffer;
+        
+        // Look for "TEMP:" prefix
+        if (strncmp(line, "TEMP:", 5) == 0) {
+            latest_temp = atoi(line + 5);
+            // Continue reading to get the most recent value
+        }
+    }
+    
+    return latest_temp;
+}
+
 void menu_temperature() {
     while (1) {
         erase();
@@ -90,9 +114,16 @@ void menu_temperature() {
         mvprintw(2, 5, "=== MENU TEMPERATURE ===");
         attroff(COLOR_PAIR(1) | A_BOLD);
         
-        mvprintw(4, 5, "Seuil actuel : %d C", seuil_temp);
-        mvprintw(6, 5, "S) Changer le seuil");
-        mvprintw(7, 5, "0) Retour");
+        // Read temperature from Arduino (now reads more frequently)
+        int temp = read_arduino_temperature();
+        if (temp != -1) {
+            current_temperature = temp;
+        }
+        
+        mvprintw(4, 5, "Temperature actuelle : %d C", current_temperature);
+        mvprintw(5, 5, "Seuil : %d C", seuil_temp);
+        mvprintw(7, 5, "S) Changer le seuil");
+        mvprintw(8, 5, "0) Retour");
         
         refresh();
 
@@ -111,7 +142,7 @@ void menu_temperature() {
             return;
         }
         
-        usleep(200000);
+        usleep(50000);
     }
 }
 

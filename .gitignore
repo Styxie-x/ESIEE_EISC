@@ -6,6 +6,11 @@ obj/
 .pio/
 .vscode/
 
+# -- temporary stuff
+
+tmp/
+*/tmp/
+
 # --- Compiled Binaries & Executables ---
 *.o
 *.a
