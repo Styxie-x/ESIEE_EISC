@@ -1,0 +1,71 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{circuitikz}
+
+\title{Préparation de TP : L'Amplificateur Opérationnel}
+\date{}
+
+
+
+\begin{document}
+\maketitle
+
+\tableofcontents 
+
+\newpage
+
+\section{Introduction}
+Ce TP porte sur l'étude expérimentale de l'Amplificateur Opérationnel (AOP) et du circuit intégré NE555. Nous allons explorer leurs limites (Slew-Rate) et leurs applications (filtrage, oscillation, modulation).
+
+
+
+\section{Mesure du Slew-Rate}
+\subsection{Définition théorique}
+Le Slew-Rate (SR) représente la vitesse maximale de variation de la tension de sortie de l'AOP (unité Volt/µs). 
+
+\subsection{Calculs préparatoires}
+Le montage utilisé est un montage non-inverseur de gain 1. En appliquant un signal carré de forte amplitude en entrée, la sortie ne peut pas suivre instantanément et présente une rampe. 
+Le SR sera calculé graphiquement sur l'oscilloscope par :
+$$SR = \frac{\Delta V_s}{\Delta t} \text{ (en } V/\mu s\text{)}$$
+
+
+\section{Montage Pseudo-Intégrateur}
+\subsection{Détermination de la fonction de transfert}
+D'après le schéma, en utilisant le théorème de Millman à l'entrée inverseuse (en supposant l'AOP idéal en régime linéaire) :
+$$H(j\omega) = \frac{\underline{V_s}}{\underline{V_e}} = -\frac{Z_2}{R_1}$$
+Avec $Z_2 = \frac{R_2 \cdot \frac{1}{jC\omega}}{R_2 + \frac{1}{jC\omega}} = \frac{R_2}{1 + jR_2C\omega}$.
+D'où :
+$$H(j\omega) = -\frac{R_2}{R_1} \cdot \frac{1}{1 + jR_2C\omega}$$
+
+\subsection{Fréquence de coupure et condition d'intégration}
+La fonction d'intégration est réalisée pour des fréquences $f \gg f_c$ avec $f_c = \frac{1}{2\pi R_2 C}$.
+Application numérique : $R_2 = 100~k\Omega$, $C = 10~nF$.
+$$f_c = \frac{1}{2\pi \cdot 10^5 \cdot 10^{-8}} \approx 159~Hz$$
+
+
+\section{Oscillateur sinusoïdal à pont de Wien}
+\subsection{Condition d'oscillation}
+Le gain de l'amplificateur non-inverseur est $A = 1 + \frac{R_2}{R_1}$. Pour compenser les pertes du pont de Wien, il faut $A \geq 3$ ($\beta = \frac{1}{3}$).
+On doit donc régler le potentiomètre $R_1$ tel que $R_1 \leq \frac{R_2}{2}$.
+
+\subsection{Fréquence propre}
+La fréquence des oscillations est donnée par :
+$$f_0 = \frac{1}{2\pi RC} = \frac{1}{2\pi \cdot 10^3 \cdot 22 \cdot 10^{-9}} \approx 7234~Hz$$
+
+\section{Génération de signaux avec le NE555}
+\subsection{Montage Astable}
+La fréquence du signal de sortie est $f = \frac{1,44}{(R_a + 2R_b)C}$.
+Pour obtenir $f \approx 700~Hz$ avec $R_a = 1~k\Omega$ et $C = 0,1~\mu F$:
+$$R_b = \frac{1}{2} \left( \frac{1,44}{f \cdot C} - R_a \right) = \frac{1}{2} \left( \frac{1,44}{700 \cdot 10^{-7}} - 1000 \right) \approx 9,78~k\Omega$$
+
+
+https://www.electronics-tutorials.ws/waveforms/555-circuits-part-1.html
+
+\end{document}

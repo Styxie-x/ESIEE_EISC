@@ -1,0 +1,58 @@
+# 1er : 
+Raison sociale : 
+    - STMicroelectronics N.V. (société de droit néerlandais, mais dont le siège opérationnel est à Genève, en Suisse).
+
+Appartenance à un groupe : 
+    - C'est une entreprise indépendante, cotée en bourse (NYSE, Euronext Paris, Borsa Italiana). 
+    - Son capital est en partie détenu par une holding commune aux États français et italien (STHolding).
+
+Type d'entreprise : 
+    - C'est une Grande Entreprise (GE) privée. Bien que les États français et italien soient actionnaires historiques, elle fonctionne comme une société privée internationale.
+
+Secteur d'activité : Industrie des semi-conducteurs.
+Métiers : Ingénieurs en conception électronique, techniciens de fabrication en "salle blanche", experts en logiciel embarqué, logistique.....
+
+Implantation géographique : 
+    - Internationale : Présente dans plus de 35 pays.
+    - Sites majeurs : Les centres de R&D et de fabrication principaux se situent en France (Crolles, Grenoble, Rousset) et en Italie (Agrate, Catane), ainsi qu'à Singapour.
+    - Ventes : Ses clients sont répartis partout dans le monde, avec une forte présence en Asie et Europe.
+
+Ancienté, origine : 
+    - Crée apres fusion de 2 entreprise en 1987:
+        - SGS Semiconductors
+        - Thomson Semiconductors
+        - nommé STMicroelectronics en 1998 apres la vente de ses actions par THOMSON.
+        - Au creation c'etait 14eme plus grand fournisseur des Semiconductors dans le monde.
+ 
+
+CA réalisé et tendance + résultats nets
+
+
+
+Effectif et tendance
+
+
+
+Offre: produits, services, prestations
+
+
+
+Types de marchés
+
+
+
+Clients/Fournisseurs
+
+
+
+Circuits de distribution
+
+
+
+Eléments de stratégie
+
+
+# Missions : 
+    Conception d’un système de test dédié aux phénomènes de Latch-up[1] sur des dispositifs soumis aux radiations.
+    Développement de bancs de test pour réaliser les essais en autonomie, sans avoir recours à de nombreux sous-traitants.
+    

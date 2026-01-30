@@ -1,0 +1,54 @@
+# --- Build Directories ---
+build/
+bin/
+obj/
+*/build/
+.pio/
+.vscode/
+
+# --- Compiled Binaries & Executables ---
+*.o
+*.a
+*.so
+*.out
+*.exe
+# Specific to your PcArduino binary
+PcArduino/build/PcArduino
+
+# --- LaTeX Temporary Files ---
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.out
+*.bbl
+*.blg
+
+# --- Electronics / LTSpice Junk ---
+# Keep .asc (schematics), ignore simulation results and logs
+*.log
+*.raw
+*.op.raw
+*.net
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# --- Documents (Useless or space-consuming) ---
+# Uncomment the line below if you want to exclude ALL PDFs
+*.pdf
+
+# Keep specific PDF exclusion if you prefer
+Competence-et-carrier/*.pdf
+Electronique/TP/*.pdf
+
+# --- Python Junk (If any) ---
+__pycache__/
+*.py[cod]
