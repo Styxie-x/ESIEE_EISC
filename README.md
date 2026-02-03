@@ -42,18 +42,6 @@
 │           │   ├── led/
 │           │   └── sensor/
 │           └── src/
-├── tmp/
-│   └── readme-directory-tree/
-│       ├── example-directory/
-│       │   ├── build/
-│       │   ├── scripts/
-│       │   ├── src/
-│       │   │   ├── backend/
-│       │   │   │   └── server/
-│       │   │   └── frontend/
-│       │   │       ├── js/
-│       │   │       └── styles/
-│       │   └── tests/
 ```
 
 <!-- TREEVIEW END -->
