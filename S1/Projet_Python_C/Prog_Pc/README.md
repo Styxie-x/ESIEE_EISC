@@ -1,8 +1,38 @@
+
+
 # Application PC - Interface Ncurses 💻
 
-Application C++17 multithread assurant la communication avec l'Arduino et l'interface utilisateur en mode texte (TUI) via Ncurses.
 
-## 🏗️ Architecture Modulaire
+## Fonctionnement
+
+Application C++17 / (code compatible C) assurant la communication avec l'Arduino et l'interface utilisateur en mode texte (TUI) via Ncurses.
+
+**Objectif :** Contrôler une LED via l'Arduino et afficher les données de température sur une interface utilisateur interactive.
+
+**Fonctionnalités principales :**
+- Interface texte interactive (Ncurses) pour contrôler les LEDs (ON / OFF / BLINK)
+- Lecture des données de température depuis les capteurs Arduino
+- Communication série bidirectionnelle (Arduino à 9600 baud, Enocean à 57600 baud)
+- Affichage dynamique des états et des données en temps réel
+
+## Étapes d'Exécution
+
+### Démarrage Rapide
+```bash
+cd Prog_Pc
+./build_and_run.sh
+```
+
+Cette commande compile et exécute l'application automatiquement dans le terminal. (voir le fichier build_and_run.sh pour plus de details).
+
+### Utilisation de l'application
+1. L'interface affiche un menu principal au démarrage
+2. Naviguez avec les touches du clavier
+3. Contrôlez la LED (activer, désactiver, clignotement)
+4. Consultez les données de température en temps réel
+5. Les données reçues de l'Arduino s'affichent automatiquement
+
+## Architecture Modulaire
 
 ### Modules Principaux
 
@@ -13,7 +43,7 @@ Application C++17 multithread assurant la communication avec l'Arduino et l'inte
 - Gestion des événements clavier
 
 #### 2. **Button Module** (`lib/button/`)
-- Interfaçage série avec l'Arduino
+- Interfaçage série (Serie) avec l'Arduino
 - Ouverture/fermeture des ports série
 - Envoi et réception de commandes
 - Gestion des débits (9600 baud pour Arduino, 57600 pour Enocean)
@@ -24,11 +54,10 @@ Application C++17 multithread assurant la communication avec l'Arduino et l'inte
 - Synchronisation avec l'Arduino
 
 #### 4. **Sensor Module** (`lib/sensor/`)
-- Lecture des capteurs (température interne ATmega328P)
-- Traitement des données de télémétrie
-- Historique des mesures
+Pour l'instant le code menu temperature reste en app.cpp et app.h pour melieur gestion.
 
-## 💡 Protocole de Communication
+
+## Protocole de Communication
 
 ### Commandes Sortantes (PC → Arduino)
 ```
@@ -43,21 +72,15 @@ TEMP:XX         → Définit le seuil de température (XX = valeur en °C)
 TEMP:XX         → Température actualisée (transmission toutes les 500ms)
 ```
 
-## 🔧 Dépendances
+## Dépendances
 
 - **CMake** ≥ 3.10
 - **Ncurses** (libncurses-dev)
 - **GCC/Clang** avec support C++17
 
-## 🚀 Compilation & Exécution
+## Compilation & Exécution
 
-### Méthode Rapide (Script Automatisé)
-```bash
-cd Prog_Pc
-./build_and_run.sh
-```
-
-### Méthode Manuelle
+### Compilation Manuelle (optionnel pour debug)
 ```bash
 cd Prog_Pc
 mkdir -p build
@@ -67,7 +90,8 @@ make
 ./PcArduino
 ```
 
-## 📁 Structure des Fichiers
+
+## Structure des Fichiers
 
 ```
 Prog_Pc/
@@ -93,7 +117,7 @@ Prog_Pc/
     └── project_structure_help.md
 ```
 
-## ⚙️ Configuration des Ports Série
+## Configuration des Ports Série
 
 Dans `main.cpp`, les ports sont configurés comme suit :
 - **Arduino :** `/dev/ttyUSB1` à 9600 baud
@@ -101,7 +125,7 @@ Dans `main.cpp`, les ports sont configurés comme suit :
 
 Modifiez ces chemins si vos périphériques sont connectés sur d'autres ports.
 
-## 🎮 Utilisation
+## Utilisation
 
 1. Démarrer l'application : `./build_and_run.sh`
 2. L'interface affiche un menu principal
@@ -109,7 +133,7 @@ Modifiez ces chemins si vos périphériques sont connectés sur d'autres ports.
 4. Contrôlez la LED et consultez les données de température
 5. Les données reçues de l'Arduino s'affichent en temps réel
 
-## 🐛 Dépannage
+## Dépannage
 
 **Erreur de port série :** Vérifiez que l'Arduino et le dongle Enocean sont connectés aux bons ports USB.
 
@@ -120,8 +144,16 @@ sudo usermod -a -G dialout $USER
 
 **Ncurses manquant :** Installez libncurses-dev via votre gestionnaire de paquets.
 
-## 📚 Références
+## Références
 
 - [Ncurses Documentation](https://tldp.org/HOWTO/NCURSES-Programming-HOWTO/)
 - [CMake Documentation](https://cmake.org/documentation/)
 - [Enocean Protocol](https://www.enocean.com/)
+
+
+
+**Copyright (C) 2026 [Styxie-x](https://github.com/Styxie-x)**  
+**License:** GNU General Public License version 3 (GPL v3)
+
+You should have received a copy of the GNU General Public License along with this project. If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
+

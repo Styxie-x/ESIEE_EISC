@@ -31,7 +31,7 @@ int read_internal_temperature() {
   
   // Convert raw ADC to temperature (in Celsius)
   // Calibrated formula for ATmega328P internal sensor
-  int temperature = (raw - 358) + 25;
+  int temperature = (int)((raw - 324) / 1.22);
   return temperature;
 }
 

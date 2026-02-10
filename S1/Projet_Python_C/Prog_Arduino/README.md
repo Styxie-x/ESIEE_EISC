@@ -1,39 +1,52 @@
-# Firmware Arduino (ATmega328P) 🤖
+# Firmware Arduino (ATmega328P)
 
 Firmware dédié à l'acquisition de données environnementales et à l'exécution de commandes actionneurs pour Arduino Nano.
 
-## 🔬 Détails Techniques Hardware
+## Notes Importantes
+
+Capteur de Température : Le groupe n'avait pas de capteur externe disponible. Deux alternatives ont été explorées :
+- Température aléatoire (implémentation précédente réussie)
+- Capteur interne ATmega328P (implémentation actuelle, moins stable mais fonctionnel)
+
+Le capteur thermique interne reste instable en raison des variations de température du microcontrôleur lui-même. Pour une application de production, un capteur externe (DHT22, DS18B20, etc.) serait recommandé.
+
+## Détails Techniques Hardware
 
 ### Capteur de Température Interne
-- **Canal ADC :** Canal 8 de l'ADC (capteur thermique interne)
-- **Référence de tension :** 1.1V interne (`REFS1 | REFS0`)
-- **Résolution :** 10 bits
-- **Formule de conversion :** `Temperature (°C) = (raw_adc - 358) + 25`
-- **Fréquence d'acquisition :** Toutes les 500ms
-- **Calibrage :** Double lecture pour améliorer la précision
 
-### Actionneur LED
+- **Canal ADC :** Canal 8 de l'ADC (capteur thermique interne)
+- **Référence de tension :** 1.1V interne (configuration registres : `REFS1 | REFS0`)
+- **Résolution :** 10 bits
+- **Formule de conversion :** `Temperature (°C) = (raw_adc - 324) / 1.22`
+  - Note : Ajustement empirique basé sur l'ATmega328P du prototype
+- **Fréquence d'acquisition :** Toutes les 500ms
+- **Stabilité :** À calibrer selon le microcontrôleur spécifique
+
+### LED
 - **Broche :** D3 (Pin 3)
 - **Type :** Sortie digitale (GPIO)
-- **Modes :** ON (continu), OFF, BLINK (500ms d'intervalle)
+- **Modes :** 
+  - ON : LED allumée en continu
+  - OFF : LED éteinte
+  - BLINK : Clignotement automatique (500ms d'intervalle)
 
 ### Liaison Série
 - **Débit :** 9600 baud
-- **Parity :** Aucune
+- **Parité :** Aucune
 - **Bits de données :** 8
 - **Bits d'arrêt :** 1
 - **Format :** ASCII
 
-## 📋 Protocole de Communication (ASCII)
+## Protocole de Communication (ASCII)
 
-### Télémétrie (Sortant vers PC) 📤
+### Télémétrie (Sortant vers PC) [PC en réception]
 ```
 TEMP:XX        → Transmission automatique de la valeur thermique
                  XX = valeur en Celsius (par ex : TEMP:28)
                  Intervalle : 500ms
 ```
 
-### Commandes (Entrant depuis PC) 📥
+### Commandes (Entrant depuis PC) [Arduino en réception]
 ```
 LED:ON         → Allume la LED de manière permanente
 LED:OFF        → Éteint complètement la LED
@@ -42,8 +55,9 @@ TEMP:XX        → Définit le seuil de température de consigne
                  XX = nouvelle valeur (par ex : TEMP:30)
 ```
 
-## 🏗️ Configuration PlatformIO
+## Configuration PlatformIO
 
+Fichier **platformio.ini**
 ```ini
 [env:nanoatmega328]
 platform = atmelavr
@@ -58,15 +72,17 @@ upload_speed = 57600
 - **Framework :** Arduino
 - **Vitesse de téléversement :** 57600 baud
 
-## 📝 Algorithme Principal
+## Algorithme Principal
 
+### Initialisation
 ```
-Initialisation :
 ├─ Configurer LED_PIN (D3) en sortie
 ├─ Initialiser série à 9600 baud
 └─ Initialiser variables d'état
+```
 
-Boucle Principale :
+### Boucle Principale (Non-bloquante)
+```
 ├─ Toutes les 500ms :
 │  ├─ Lire température interne
 │  └─ Transmettre TEMP:XX au PC
@@ -78,7 +94,9 @@ Boucle Principale :
    └─ Mettre à jour LED ou seuil TEMP
 ```
 
-## 🔌 Brochage Arduino Nano
+Avantage clé : Architecture non-bloquante utilisant `millis()` pour la gestion du temps (pas de `delay()` qui bloquerait l'exécution).
+
+## Brochage Arduino Nano
 
 | Fonction | Broche | Pin Arduino |
 |----------|--------|-------------|
@@ -88,7 +106,8 @@ Boucle Principale :
 | GND | GND | GND |
 | +5V | VCC | VCC |
 
-## 🚀 Compilation & Téléversement
+
+## Compilation & Téléversement
 
 ### Avec PlatformIO (Recommandé)
 ```bash
@@ -103,7 +122,9 @@ platformio run --target upload
 4. Sélectionner le port COM approprié
 5. Cliquer sur **Téléverser**
 
-## 📚 Variables Globales Principales
+## Variables Globales Principales
+
+Ces variables gèrent l'état global du firmware :
 
 | Variable | Type | Description |
 |----------|------|-------------|
@@ -113,7 +134,7 @@ platformio run --target upload
 | `last_blink_time` | unsigned long | Timestamp du dernier changement BLINK |
 | `last_temp_send_time` | unsigned long | Timestamp du dernier envoi TEMP |
 
-## 🔧 Constantes Configurables
+## Constantes Configurables
 
 ```cpp
 const uint8_t LED_PIN = 3;                    // Broche LED
@@ -123,21 +144,27 @@ const unsigned long TEMP_SEND_INTERVAL_MS = 500;  // Intervalle envoi températu
 
 Modifiez ces valeurs pour adapter le comportement du firmware à vos besoins.
 
-## 🧪 Tests & Validation
+## Tests & Validation
 
 ### Test Série
 Utilisez un moniteur série (9600 baud) pour :
 1. Vérifier la réception des `TEMP:XX` toutes les 500ms
-2. Envoyer `LED:ON`, `LED:OFF`, `LED:BLINK` et observer les changements
+2. Envoyer `LED:ON`, `LED:OFF`, `LED:BLINK` et observer les changements en temps réel
 3. Envoyer `TEMP:25` pour modifier le seuil
 
-### Dépannage
-- **Pas de température :** Vérifiez la configuration ADC et la référence 1.1V
-- **LED non réactive :** Vérifiez la broche D3 et les connexions
-- **Communication série impossible :** Vérifiez le débit (9600 baud) et le câble USB
+## Dépannage
 
-## 📖 Ressources
+| Problème | Cause | Solution |
+|----------|-------|----------|
+| Pas de température | Configuration ADC incorrecte | Vérifiez canal ADC 8 et référence 1.1V dans `read_internal_temperature()` |
+| Valeurs erratiques | Capteur interne instable | Calibrer la formule selon votre ATmega328P spécifique |
+| LED non réactive | Broche D3 non configurée | Vérifiez `pinMode(LED_PIN, OUTPUT)` en setup |
+| Communication échouée | Débit incorrect ou câble USB | Vérifiez 9600 baud et connexion USB de l'Arduino |
+| Téléversement échoue | Bootloader incompatible | Sélectionnez "ATmega328P (Old Bootloader)" en Arduino IDE |
+
+## Ressources
 
 - [ATmega328P Datasheet](https://ww1.microchip.com/en-us/product/ATmega328P)
 - [Arduino Reference](https://www.arduino.cc/reference/en/)
 - [PlatformIO Documentation](https://docs.platformio.org/)
+- [Capteurs de Température pour Arduino](https://create.arduino.cc/projecthub/Arduino_Genuino/deep-dive-into-the-arduino-uno-temperature-sensor-c6a1e5)
