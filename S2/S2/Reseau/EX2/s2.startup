@@ -1,0 +1,4 @@
+ip link set eth0 up
+ip addr add 172.31.0.20/16 br + dev eth0
+ip route add default via 172.31.0.2
+
