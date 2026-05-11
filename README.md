@@ -2,6 +2,13 @@
 ```bash
 .
 ├── C
+│   ├── Base_prog1
+│   │   ├── docs
+│   │   ├── exemples
+│   │   ├── external
+│   │   ├── lib
+│   │   │   └── fonction
+│   │   └── src
 │   ├── TD1
 │   │   ├── docs
 │   │   ├── exemples
@@ -87,6 +94,6 @@
     └── Reseau
         └── EX2
 
-86 directories
+93 directories
 ```
 
