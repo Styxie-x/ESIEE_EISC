@@ -1,26 +1,67 @@
-# --- Build Directories ---
+# ==============================================================================
+# .gitignore personnalisé pour ton environnement EISC / Projets C & Élec
+# ==============================================================================
+
+# --- Build Directories (Récursif pour tous tes sous-projets CMake/VFS/TDs) ---
 build/
 bin/
 obj/
-*/build/
+**/build/
+**/bin/
+**/obj/
+
+# --- PlatformIO (Spécifique à S1/Projet_Python_C/Prog_Arduino/) ---
 .pio/
+**/.pio/
+
+# --- IDEs & Outils de dev ---
 .vscode/
+**/.vscode/
+.idea/
+**/.idea/
+*CMakeLists.txt.user
 
-# -- temporary stuff
+# --- C / CMake Build System (Garantit de bloquer les fichiers générés) ---
+CMakeCache.txt
+**/CMakeCache.txt
+CMakeFiles/
+**/CMakeFiles/
+CMakeScripts/
+**/CMakeScripts/
+Testing/
+**/Testing/
+_deps/
+**/_deps/
+Makefile
+**/Makefile
+cmake_install.cmake
+**/cmake_install.cmake
+install_manifest.txt
+**/install_manifest.txt
+compile_commands.json
+**/compile_commands.json
+CTestTestfile.cmake
+**/CTestTestfile.cmake
 
-tmp/
-*/tmp/
-
-# --- Compiled Binaries & Executables ---
+# --- Binaires Compilés, Librairies & Temporaires ---
 *.o
 *.a
 *.so
 *.out
 *.exe
-# Specific to your PcArduino binary
-PcArduino/build/PcArduino
+tmp/
+**/tmp/
 
-# --- LaTeX Temporary Files ---
+# --- LTSpice junk & Simulation Outputs (Garde tes .asc et bloque les résidus) ---
+# Bloque les fichiers lourds ou inutiles de simulation dans LtspiceBUp, S1 et S2
+*.log
+*.raw
+*.op.raw
+*.net
+*.fft
+# Note: On conserve les .plt (ta configuration d'affichage des courbes) et les .asc (schémas)
+
+# --- LaTeX Temporary Files (Pour tes TP et Comptes-Rendus dans S1/) ---
 *.aux
 *.fdb_latexmk
 *.fls
@@ -32,28 +73,13 @@ PcArduino/build/PcArduino
 *.out
 *.bbl
 *.blg
+*.dvi
+*.blg
+*.bcf
+*.run.xml
 
-# --- Electronics / LTSpice Junk ---
-# Keep .asc (schematics), ignore simulation results and logs
-*.log
-*.raw
-*.op.raw
-*.net
-
-# --- Operating System Files ---
+# --- Système & Divers ---
 .DS_Store
 Thumbs.db
 *~
 *.swp
-
-# --- Documents (Useless or space-consuming) ---
-# Uncomment the line below if you want to exclude ALL PDFs
-*.pdf
-
-# Keep specific PDF exclusion if you prefer
-Competence-et-carrier/*.pdf
-Electronique/TP/*.pdf
-
-# --- Python Junk (If any) ---
-__pycache__/
-*.py[cod]

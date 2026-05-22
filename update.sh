@@ -14,7 +14,7 @@ if [ -n "$(git status --porcelain)" ]; then
     
     # Run your treeview script (to show the user what happened)
     ./treeview.sh
-    
+    git add .
     # Commit with date and a list of changed files
     # We use a variable for the status to keep the command clean
     CHANGES=$(git status --porcelain)

@@ -2,57 +2,81 @@
 ```bash
 .
 ├── C
-│   ├── Base_prog1
+│   ├── Projects
+│   │   └── VFS
+│   │       ├── docs
+│   │       ├── inc
+│   │       ├── lib
+│   │       └── src
+│   ├── S1
+│   │   ├── TD1
+│   │   ├── TD2
+│   │   │   ├── docs
+│   │   │   ├── exemples
+│   │   │   ├── external
+│   │   │   ├── lib
+│   │   │   │   └── fonction
+│   │   │   └── src
+│   │   ├── TD3
+│   │   │   ├── docs
+│   │   │   ├── exemples
+│   │   │   ├── external
+│   │   │   ├── lib
+│   │   │   │   └── fonction
+│   │   │   └── src
+│   │   ├── TD4
+│   │   │   ├── docs
+│   │   │   ├── exemples
+│   │   │   ├── external
+│   │   │   ├── lib
+│   │   │   │   └── fonction
+│   │   │   └── src
+│   │   ├── TD5
+│   │   │   ├── docs
+│   │   │   ├── exemples
+│   │   │   ├── external
+│   │   │   ├── lib
+│   │   │   │   └── fonction
+│   │   │   └── src
+│   │   └── TD7
+│   │       ├── docs
+│   │       ├── exemples
+│   │       ├── external
+│   │       ├── lib
+│   │       │   └── fonction
+│   │       └── src
+│   ├── S2
+│   │   ├── Algo_et_prog
+│   │   │   └── Structs
+│   │   │       ├── docs
+│   │   │       ├── exemples
+│   │   │       ├── external
+│   │   │       ├── lib
+│   │   │       └── src
+│   │   └── Base_Prog
+│   │       ├── Base_prog1
+│   │       │   ├── docs
+│   │       │   ├── exemples
+│   │       │   ├── external
+│   │       │   ├── lib
+│   │       │   └── src
+│   │       ├── Base_prog2
+│   │       │   ├── docs
+│   │       │   ├── exemples
+│   │       │   ├── external
+│   │       │   ├── lib
+│   │       │   └── src
+│   │       └── Base_proj
+│   │           ├── lib
+│   │           └── src
+│   ├── Template
 │   │   ├── docs
 │   │   ├── exemples
 │   │   ├── external
 │   │   ├── lib
 │   │   │   └── fonction
 │   │   └── src
-│   ├── TD1
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   ├── Module_1
-│   │   │   └── Module_2
-│   │   └── src
-│   ├── TD2
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   ├── TD3
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   ├── TD4
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   ├── TD5
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   ├── TD7
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   └── Template
+│   └── TemplateC
 │       ├── docs
 │       ├── exemples
 │       ├── external
@@ -60,6 +84,7 @@
 │       │   └── fonction
 │       └── src
 ├── LtspiceBUp
+├── Obsidian
 ├── S1
 │   ├── Competence-et-carrier
 │   ├── Electronique
@@ -94,6 +119,6 @@
     └── Reseau
         └── EX2
 
-93 directories
+118 directories
 ```
 
