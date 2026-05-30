@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
 # Set the project name and version
-project(${PROJECT_NAME} VERSION 1.0 LANGUAGES C)
+project(${PROJECT_NAME} VERSION 1.0)
 
 # Specify the C standard
 set(CMAKE_C_STANDARD 99)
@@ -16,8 +16,6 @@ include_directories(${CMAKE_SOURCE_DIR}/exemples)
 include_directories(${CMAKE_SOURCE_DIR}/external)
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/inc)
-include_directories(${CMAKE_SOURCE_DIR})
 
 
 # Include directories for header files
@@ -27,13 +25,14 @@ include_directories("${CMAKE_SOURCE_DIR}/lib")
 # Find all .c files in the src and lib directories (including subdirectories)
 file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/*.c"
+    "${CMAKE_SOURCE_DIR}/lib/*.c"
     "${CMAKE_SOURCE_DIR}/lib/*/*.c"
 )
 
 # Find all header files in the lib directory (including subdirectories)
 file(GLOB_RECURSE HEADERS
+    "${CMAKE_SOURCE_DIR}/lib/*.h"
     "${CMAKE_SOURCE_DIR}/lib/*/*.h"
-    "${CMAKE_SOURCE_DIR}/inc/*.h"
 )
 
 
