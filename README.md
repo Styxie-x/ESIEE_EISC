@@ -107,22 +107,18 @@
 │   │           ├── Emmeteur
 │   │           └── Recepteur
 │   ├── java
-│   │   ├── Hellowrold
-│   │   │   ├── src
-│   │   │   │   ├── main
-│   │   │   │   └── test
-│   │   │   └── target
-│   │   │       ├── classes
-│   │   │       └── generated-sources
-│   │   └── java1
-│   │       └── demo
-│   │           ├── src
-│   │           └── target
+│   │   ├── Projet-Java
+│   │   └── TP
+│   │       ├── Hellowrold
+│   │       │   ├── src
+│   │       │   └── target
+│   │       └── java1
+│   │           └── demo
 │   └── MATH_TP
 │       └── TP2
 ├── LtspiceBUp
 └── Obsidian
 
-122 directories
+118 directories
 ```
 

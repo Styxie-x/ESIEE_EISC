@@ -8,7 +8,7 @@ if [ -n "$(git status --porcelain)" ]; then
     echo "There are pending changes."
     
     # Add all changes
-    git add .
+    git add -A
     # manual tui
     # git add -i
     
