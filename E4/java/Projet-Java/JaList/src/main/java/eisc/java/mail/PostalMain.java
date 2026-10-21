@@ -12,14 +12,14 @@ public class PostalMain {
                     "Expéditeur " + i,
                     i + " Rue de Paris",
                     "Paris",
-                    "France"
+                    "France " + i
             );
 
             Address addressee = new Address(
                     "Destinataire " + i,
                     (i * 2) + " Avenue de Lyon",
                     "Lyon",
-                    "France"
+                    "France " + i
             );
 
             double mass = Math.round((0.1 * i + 0.2) * 100.0) / 100.0;
