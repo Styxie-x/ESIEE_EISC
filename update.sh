@@ -1,28 +1,38 @@
+
 #!/usr/bin/env bash
 
-# 1. Status repo (Optional/Manual check)
-# git status
+set -e
+
+# 1. Show the current repository tree
+./treeview.sh
 
 # 2. Check for changes
-if [ -n "$(git status --porcelain)" ]; then
+if [[ -n "$(git status --porcelain)" ]]; then
     echo "There are pending changes."
-    
-    # Add all changes
+
+    # Stage all changes
     git add -A
-    # manual tui
-    # git add -i
-    
-    # Run your treeview script (to show the user what happened)
+
+    # Show the updated tree
     ./treeview.sh
-    git add .
-    # Commit with date and a list of changed files
-    # We use a variable for the status to keep the command clean
-    CHANGES=$(git status --porcelain)
-    git commit -m "updated repo $(date +%Y-%m-%d)" -m "$CHANGES"
-    
+
+    # Stage any changes made by treeview.sh
+    git add -A
+
+    # Capture staged changes for the commit body
+    CHANGES=$(git diff --cached --name-status)
+
+    # Get current date and time
+    DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
+
+    # Commit with date, time, and changed files
+    git commit \
+        -m "updated repo $DATETIME" \
+        -m "Changed files:" \
+        -m "$CHANGES"
+
+    # Push the commit
     git push
 else
     echo "Nothing to commit."
 fi
-
-# 3. Build the new README (Add your logic below)
