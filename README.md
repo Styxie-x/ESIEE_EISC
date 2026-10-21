@@ -1,130 +1,128 @@
 
 ```bash
 .
-├── C
-│   ├── Projects
-│   │   └── File_system
-│   │       └── TestData
-│   ├── S1
-│   │   ├── TD1
-│   │   ├── TD2
+├── E3
+│   ├── C
+│   │   ├── Projects
+│   │   │   └── File_system
+│   │   │       └── Output
+│   │   ├── S1
+│   │   │   ├── TD2
+│   │   │   │   ├── docs
+│   │   │   │   ├── exemples
+│   │   │   │   ├── external
+│   │   │   │   ├── lib
+│   │   │   │   └── src
+│   │   │   ├── TD3
+│   │   │   │   ├── docs
+│   │   │   │   ├── exemples
+│   │   │   │   ├── external
+│   │   │   │   ├── lib
+│   │   │   │   └── src
+│   │   │   ├── TD4
+│   │   │   │   ├── docs
+│   │   │   │   ├── exemples
+│   │   │   │   ├── external
+│   │   │   │   ├── lib
+│   │   │   │   └── src
+│   │   │   ├── TD5
+│   │   │   │   ├── docs
+│   │   │   │   ├── exemples
+│   │   │   │   ├── external
+│   │   │   │   ├── lib
+│   │   │   │   └── src
+│   │   │   └── TD7
+│   │   │       ├── docs
+│   │   │       ├── exemples
+│   │   │       ├── external
+│   │   │       ├── lib
+│   │   │       └── src
+│   │   ├── S2
+│   │   │   ├── Algo_et_prog
+│   │   │   │   ├── Euclide
+│   │   │   │   ├── Regenerer
+│   │   │   │   ├── Structs
+│   │   │   │   └── TP
+│   │   │   └── Base_Prog
+│   │   │       ├── Base_prog1
+│   │   │       ├── Base_prog2
+│   │   │       ├── Base_proj
+│   │   │       ├── network-c-2025
+│   │   │       ├── Revision
+│   │   │       └── UDP
+│   │   ├── Template
 │   │   │   ├── docs
 │   │   │   ├── exemples
 │   │   │   ├── external
 │   │   │   ├── lib
 │   │   │   │   └── fonction
 │   │   │   └── src
-│   │   ├── TD3
-│   │   │   ├── docs
-│   │   │   ├── exemples
-│   │   │   ├── external
-│   │   │   ├── lib
-│   │   │   │   └── fonction
-│   │   │   └── src
-│   │   ├── TD4
-│   │   │   ├── docs
-│   │   │   ├── exemples
-│   │   │   ├── external
-│   │   │   ├── lib
-│   │   │   │   └── fonction
-│   │   │   └── src
-│   │   ├── TD5
-│   │   │   ├── docs
-│   │   │   ├── exemples
-│   │   │   ├── external
-│   │   │   ├── lib
-│   │   │   │   └── fonction
-│   │   │   └── src
-│   │   └── TD7
+│   │   └── TemplateC
 │   │       ├── docs
 │   │       ├── exemples
 │   │       ├── external
 │   │       ├── lib
 │   │       │   └── fonction
 │   │       └── src
-│   ├── S2
-│   │   ├── Algo_et_prog
-│   │   │   ├── Structs
-│   │   │   │   ├── docs
-│   │   │   │   ├── exemples
-│   │   │   │   ├── external
-│   │   │   │   ├── lib
-│   │   │   │   └── src
+│   ├── S1
+│   │   ├── Competence-et-carrier
+│   │   ├── Electronique
 │   │   │   └── TP
-│   │   │       └── Pascal
-│   │   └── Base_Prog
-│   │       ├── Base_prog1
-│   │       │   ├── docs
-│   │       │   ├── exemples
-│   │       │   ├── external
+│   │   ├── Math
+│   │   ├── Projet_Elec
+│   │   │   ├── CR
+│   │   │   │   └── ProjetBJTEISCPartie1202-img
+│   │   │   └── LTSPICE
+│   │   │       ├── 3_1
+│   │   │       └── 3_2
+│   │   └── Projet_Python_C
+│   │       ├── Prog_Arduino
+│   │       │   ├── include
 │   │       │   ├── lib
-│   │       │   └── src
-│   │       ├── Base_prog2
-│   │       │   ├── docs
-│   │       │   ├── exemples
-│   │       │   ├── external
-│   │       │   ├── lib
-│   │       │   └── src
-│   │       ├── Base_proj
-│   │       │   ├── lib
-│   │       │   └── src
-│   │       ├── network-c-2025
-│   │       └── UDP
+│   │       │   ├── src
+│   │       │   └── test
+│   │       └── Prog_Pc
 │   │           ├── docs
 │   │           ├── exemples
 │   │           ├── external
 │   │           ├── lib
 │   │           └── src
-│   ├── Template
-│   │   ├── docs
-│   │   ├── exemples
-│   │   ├── external
-│   │   ├── lib
-│   │   │   └── fonction
-│   │   └── src
-│   └── TemplateC
-│       ├── docs
-│       ├── exemples
-│       ├── external
-│       ├── lib
-│       │   └── fonction
-│       └── src
+│   └── S2
+│       ├── ElecNum
+│       │   ├── TP2
+│       │   └── TP2_2
+│       └── Reseau
+│           └── EX2
+├── E4
+│   ├── E4Badis
+│   │   └── TP1
+│   │       ├── RF24-ESIPE
+│   │       │   ├── examples
+│   │       │   ├── examples_linux
+│   │       │   ├── examples_RPi
+│   │       │   ├── pyRF24
+│   │       │   ├── RPi
+│   │       │   └── utility
+│   │       └── TP1-NRF24
+│   │           ├── Emmeteur
+│   │           └── Recepteur
+│   ├── java
+│   │   ├── Hellowrold
+│   │   │   ├── src
+│   │   │   │   ├── main
+│   │   │   │   └── test
+│   │   │   └── target
+│   │   │       ├── classes
+│   │   │       └── generated-sources
+│   │   └── java1
+│   │       └── demo
+│   │           ├── src
+│   │           └── target
+│   └── MATH_TP
+│       └── TP2
 ├── LtspiceBUp
-├── Obsidian
-├── S1
-│   ├── Competence-et-carrier
-│   ├── Electronique
-│   │   └── TP
-│   ├── Math
-│   ├── Projet_Elec
-│   │   ├── CR
-│   │   │   └── ProjetBJTEISCPartie1202-img
-│   │   └── LTSPICE
-│   │       ├── 3_1
-│   │       └── 3_2
-│   └── Projet_Python_C
-│       ├── Prog_Arduino
-│       │   ├── include
-│       │   ├── lib
-│       │   ├── src
-│       │   └── test
-│       └── Prog_Pc
-│           ├── docs
-│           ├── exemples
-│           ├── external
-│           ├── lib
-│           │   ├── app
-│           │   ├── button
-│           │   ├── led
-│           │   └── sensor
-│           └── src
-└── S2
-    ├── ElecNum
-    │   ├── TP2
-    │   └── TP2_2
-    └── Reseau
-        └── EX2
+└── Obsidian
 
-124 directories
+122 directories
 ```
 
