@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 set -e
@@ -25,9 +24,16 @@ if [[ -n "$(git status --porcelain)" ]]; then
     # Get current date and time
     DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
 
-    # Commit with date, time, and changed files
+    # Build commit title
+    if [[ -n "$1" ]]; then
+        COMMIT_TITLE="updated repo $DATETIME - $1"
+    else
+        COMMIT_TITLE="updated repo $DATETIME"
+    fi
+
+    # Commit with date, time, optional comment, and changed files
     git commit \
-        -m "updated repo $DATETIME" \
+        -m "$COMMIT_TITLE" \
         -m "Changed files:" \
         -m "$CHANGES"
 
