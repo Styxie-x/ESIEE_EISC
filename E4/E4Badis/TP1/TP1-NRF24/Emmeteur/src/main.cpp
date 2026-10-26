@@ -32,7 +32,7 @@ DFRobot_ENS160_I2C ens160(&Wire, 0x53);
 
 // Timing non-bloquant
 unsigned long previousMillis = 0;
-const unsigned long interval = 2000; // Intervalle de lecture : 2 secondes
+const unsigned long interval = 2000; // Intervalle de lecture et transmission : 2 secondes
 
 // Variables de stockage des mesures
 float currentTemp = 0.0;
@@ -73,6 +73,25 @@ void updateAirQuality(float temp, float hum, uint16_t &eco2, uint16_t &tvoc, uin
     aqi  = ens160.getAQI();
 }
 
+void sendSCPITemperature(float temp) {
+    char payload[32];
+    // SCPI measurement format: :MEAS:TEMP <val>\n
+    // dtostrf formats the float on AVR architecture without bloating printf
+    char tempStr[8];
+    dtostrf(temp, 4, 2, tempStr);
+    snprintf(payload, sizeof(payload), ":MEAS:TEMP %s\n", tempStr);
+
+    radio.stopListening();
+    bool success = radio.write(payload, strlen(payload));
+    radio.startListening();
+
+    Serial.print(F("[TX SCPI] "));
+    Serial.print(payload); // payload already includes '\n'
+    if (!success) {
+        Serial.println(F(" -> [TX ERR] NACK / Target unreachable"));
+    }
+}
+
 void updateAndDisplaySensors() {
     readAHT(currentTemp, currentHumidity);
     updateAirQuality(currentTemp, currentHumidity, currentECO2, currentTVOC, currentAQI);
@@ -87,6 +106,9 @@ void updateAndDisplaySensors() {
     Serial.print(currentTVOC);
     Serial.print(F(" ppb | AQI : "));
     Serial.println(currentAQI);
+
+    // Envoi SCPI sur nRF24
+    sendSCPITemperature(currentTemp);
 }
 
 // --- Setup & Loop ---
@@ -130,7 +152,7 @@ void loop() {
         radio.startListening(); // Rétablit l'écoute après l'envoi
     }
 
-    // 2. Gestion non-bloquante de l'affichage des capteurs
+    // 2. Gestion non-bloquante de l'affichage des capteurs et de l'envoi SCPI
     unsigned long currentMillis = millis();
     if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;

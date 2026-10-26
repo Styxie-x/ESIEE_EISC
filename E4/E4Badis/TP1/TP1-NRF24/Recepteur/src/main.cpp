@@ -1,106 +1,157 @@
 #include <Arduino.h>
-/*
- * Ce code permet d'envoyer des données d'un noeud à un autre
- * Mise à jours : Septembre 20 par Hakim Badis
- */
-
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 #include "printf.h"
 
-char message;
-
 #define serial_baud_rate 115200
 
-//****** CE and CSN are configurable, specified values for Arduino NANO as connected above
 #define CE_PIN 7
 #define CSN_PIN 8
 
 RF24 radio(CE_PIN, CSN_PIN);
 
-// byte addresse[6] = "1Node";
 const uint64_t addresses[2] = {0xa1a1a1a1a1, 0xd1d1d1d1d1};
 
-/****************** User Config ***************************/
-/***      Set this radio as radio number 0 or 1 to distinguish the two nodes  ***/
-bool radioNumber = 0;
+// Configuration du nœud récepteur
+bool radioNumber = 0; 
+const uint8_t Led = 2;
 
-// Used to control whether this node is sending or receiving
-bool role = 0;
-const uint8_t Led = 2; // LED integree du Nano, broche D13
+// Machine à états pour la LED
+enum LedMode {
+    LED_OFF,
+    LED_ON,
+    LED_BLINK,
+    LED_TEMP_MONITOR
+};
 
-void setup()
-{
-  Serial.begin(115200);
-  printf_begin();
-  pinMode(Led, OUTPUT);
-  digitalWrite(Led, LOW);
+LedMode currentMode = LED_OFF;
 
-  radio.NRF24Initialization();
-  radio.FastresestNRF24();
-  radio.setRetries(5, 15);
-  radio.setDataRate(RF24_2MBPS);
-  radio.setChannel(30);
-  // Set the PA Level low to prevent power supply related issues since this is a
-  // getting_started sketch, and the likelihood of close proximity of the devices. RF24_PA_MAX is default.
-  radio.setPALevel(RF24_PA_HIGH);
+// Gestion du clignotement non bloquant
+unsigned long previousBlinkMillis = 0;
+const unsigned long blinkInterval = 250; // demi-période (ms)
+bool blinkState = false;
 
-  // Open a writing and reading pipe on each radio, with opposite addresses
-  if (radioNumber)
-  {
-    radio.openWritingPipe(addresses[1]);
-    radio.openReadingPipe(1, addresses[0]);
-  }
-  else
-  {
-    radio.openWritingPipe(addresses[0]);
-    radio.openReadingPipe(1, addresses[1]);
-  }
+// Buffer de réception radio
+char rxBuffer[33];
 
-  radio.printDetails();
-
-  Serial.println(F("\n*** PRESS 'T' to begin transmitting to the other node*****\n"));
-
-  // Start the radio listening for data
-  radio.startListening();
-  digitalWrite(Led, HIGH);
-
+void setLedMode(LedMode newMode) {
+    currentMode = newMode;
+    switch (currentMode) {
+        case LED_ON:
+            digitalWrite(Led, HIGH);
+            Serial.println(F("[MODE] LED Allumee fixe (A)"));
+            break;
+        case LED_OFF:
+            digitalWrite(Led, LOW);
+            Serial.println(F("[MODE] LED Eteinte (E)"));
+            break;
+        case LED_BLINK:
+            Serial.println(F("[MODE] Clignotement actif (C)"));
+            break;
+        case LED_TEMP_MONITOR:
+            Serial.println(F("[MODE] Surveillance temperature active (T)"));
+            break;
+    }
 }
 
-void loop()
-{
-  /****************** Pong Back Role ***************************/
-
-  radio.startListening();
-
-  if (radio.available())
-  {
-    // Variable for the received timestamp
-    while (radio.available())
-    { // While there is data ready
-      radio.read(&message, sizeof(char)); // Get the payload
-      
-
-      if (message == 'A')
-      {
-        digitalWrite(Led, HIGH);
-      }
-      else if (message == 'E')
-      {
-        digitalWrite(Led, LOW);
-      }
-      else if (message == 'B')
-      {
-        digitalWrite(Led, HIGH);
-        delay(250);
-        digitalWrite(Led, LOW);
-      }
-
-      else
-      {
-        Serial.print(message);
-      }
+void processCommand(const char* payload) {
+    // 1. Commandes directes sur un caractère
+    if (payload[0] == 'A' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
+        setLedMode(LED_ON);
+    } 
+    else if (payload[0] == 'E' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
+        setLedMode(LED_OFF);
+    } 
+    else if (payload[0] == 'C' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
+        setLedMode(LED_BLINK);
+    } 
+    else if (payload[0] == 'T' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
+        setLedMode(LED_TEMP_MONITOR);
     }
-  }
+    // 2. Trames SCPI de température : :MEAS:TEMP <valeur>
+    else if (strncmp(payload, ":MEAS:TEMP", 10) == 0) {
+        float temp = atof(payload + 10);
+        Serial.print(F("[SCPI RECU] Temperature : "));
+        Serial.print(temp, 2);
+        Serial.println(F(" °C"));
+
+        if (currentMode == LED_TEMP_MONITOR) {
+            if (temp > 25.0f) {
+                digitalWrite(Led, HIGH);
+                Serial.println(F(" -> Seuil depasse (>25°C) : LED ON"));
+            } else {
+                digitalWrite(Led, LOW);
+                Serial.println(F(" -> Temperature nominale (<=25°C) : LED OFF"));
+            }
+        }
+    } 
+    else {
+        // Affichage transparent des données inconnues
+        Serial.print(F("[RX RAW] "));
+        Serial.println(payload);
+    }
+}
+
+void handleLedBlink() {
+    if (currentMode == LED_BLINK) {
+        unsigned long currentMillis = millis();
+        if (currentMillis - previousBlinkMillis >= blinkInterval) {
+            previousBlinkMillis = currentMillis;
+            blinkState = !blinkState;
+            digitalWrite(Led, blinkState ? HIGH : LOW);
+        }
+    }
+}
+
+void setup() {
+    Serial.begin(serial_baud_rate);
+    printf_begin();
+
+    pinMode(Led, OUTPUT);
+    digitalWrite(Led, LOW);
+
+    radio.begin();
+    radio.setRetries(5, 15);
+    radio.setDataRate(RF24_2MBPS);
+    radio.setChannel(30);
+    radio.setPALevel(RF24_PA_HIGH);
+
+    if (radioNumber) {
+        radio.openWritingPipe(addresses[1]);
+        radio.openReadingPipe(1, addresses[0]);
+    } else {
+        radio.openWritingPipe(addresses[0]);
+        radio.openReadingPipe(1, addresses[1]);
+    }
+
+    radio.printDetails();
+    radio.startListening();
+
+    Serial.println(F("--- Recepteur NRF24 pret ---"));
+    Serial.println(F("Commandes : A (ON), E (OFF), C (Clignotement), T (Surveillance temp >25°C)"));
+}
+
+void loop() {
+    // 1. Réception RF24
+    if (radio.available()) {
+        uint8_t bytesReceived = radio.getDynamicPayloadSize();
+        if (bytesReceived == 0) {
+            bytesReceived = radio.getPayloadSize();
+        }
+        if (bytesReceived > 32) bytesReceived = 32;
+
+        radio.read(rxBuffer, bytesReceived);
+        rxBuffer[bytesReceived] = '\0'; // Fin de chaîne sécurisée
+
+        // Nettoyage des fins de ligne
+        while (bytesReceived > 0 && (rxBuffer[bytesReceived - 1] == '\r' || rxBuffer[bytesReceived - 1] == '\n')) {
+            rxBuffer[--bytesReceived] = '\0';
+        }
+
+        processCommand(rxBuffer);
+    }
+
+    // 2. Gestion non bloquante du mode clignotant
+    handleLedBlink();
 }
