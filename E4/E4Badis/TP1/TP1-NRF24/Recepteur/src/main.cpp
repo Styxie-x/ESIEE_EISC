@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
+#include <Servo.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 #include "printf.h"
@@ -8,8 +9,13 @@
 
 #define CE_PIN 7
 #define CSN_PIN 8
+#define SERVO_PIN A1
 
 RF24 radio(CE_PIN, CSN_PIN);
+Servo servoS3003;
+const unsigned long servoCommandTimeout = 500;
+unsigned long lastServoCommandMillis = 0;
+bool servoStoppedByTimeout = true;
 
 const uint64_t addresses[2] = {0xa1a1a1a1a1, 0xd1d1d1d1d1};
 
@@ -22,6 +28,7 @@ enum LedMode {
     LED_OFF,
     LED_ON,
     LED_BLINK,
+    LED_ENOCEAN_BUTTON,
     LED_TEMP_MONITOR
 };
 
@@ -34,6 +41,10 @@ bool blinkState = false;
 
 // Buffer de réception radio
 char rxBuffer[33];
+char servoRxBuffer[8];
+uint8_t servoRxLength = 0;
+unsigned long lastServoByteMillis = 0;
+bool servoRxActive = false;
 
 void setLedMode(LedMode newMode) {
     currentMode = newMode;
@@ -49,6 +60,9 @@ void setLedMode(LedMode newMode) {
         case LED_BLINK:
             Serial.println(F("[MODE] Clignotement actif (C)"));
             break;
+        case LED_ENOCEAN_BUTTON:
+            Serial.println(F("[MODE] Bouton EnOcean actif (T)"));
+            break;
         case LED_TEMP_MONITOR:
             Serial.println(F("[MODE] Surveillance temperature active (T)"));
             break;
@@ -56,8 +70,29 @@ void setLedMode(LedMode newMode) {
 }
 
 void processCommand(const char* payload) {
-    // 1. Commandes directes sur un caractère
-    if (payload[0] == 'A' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
+    // Commande servo : S:<angle>, avec un angle compris entre 0 et 180.
+    if (payload[0] == 'S' && payload[1] == ':') {
+        char* end = nullptr;
+        long angle = strtol(payload + 2, &end, 10);
+
+        Serial.print(F("[SERVO RECU] Angle : "));
+        Serial.println(payload + 2);
+
+        if (end != payload + 2 && *end == '\0' && angle >= 0 && angle <= 180) {
+            if (!servoS3003.attached()) {
+                servoS3003.attach(SERVO_PIN);
+            }
+            servoS3003.write((int)angle);
+            lastServoCommandMillis = millis();
+            servoStoppedByTimeout = false;
+            Serial.print(F("[SERVO APPLIQUE] Angle : "));
+            Serial.println(angle);
+        } else {
+            Serial.println(F("[SERVO IGNORE] Commande invalide ou angle hors limites"));
+        }
+    }
+    // Commandes directes sur un caractère
+    else if (payload[0] == 'A' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
         setLedMode(LED_ON);
     } 
     else if (payload[0] == 'E' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
@@ -67,7 +102,9 @@ void processCommand(const char* payload) {
         setLedMode(LED_BLINK);
     } 
     else if (payload[0] == 'T' && (payload[1] == '\0' || payload[1] == '\r' || payload[1] == '\n')) {
-        setLedMode(LED_TEMP_MONITOR);
+        setLedMode(LED_ENOCEAN_BUTTON);
+        digitalWrite(Led, digitalRead(Led) == LOW ? HIGH : LOW);
+        Serial.println(F("[LED] Toggle EnOcean applique"));
     }
     // 2. Trames SCPI de température : :MEAS:TEMP <valeur>
     else if (strncmp(payload, ":MEAS:TEMP", 10) == 0) {
@@ -77,12 +114,12 @@ void processCommand(const char* payload) {
         Serial.println(F(" °C"));
 
         if (currentMode == LED_TEMP_MONITOR) {
-            if (temp > 25.0f) {
+            if (temp > 26.0f) {
                 digitalWrite(Led, HIGH);
                 Serial.println(F(" -> Seuil depasse (>25°C) : LED ON"));
             } else {
                 digitalWrite(Led, LOW);
-                Serial.println(F(" -> Temperature nominale (<=25°C) : LED OFF"));
+                Serial.println(F(" -> Temperature nominale (<=26°C) : LED OFF"));
             }
         }
     } 
@@ -91,6 +128,58 @@ void processCommand(const char* payload) {
         Serial.print(F("[RX RAW] "));
         Serial.println(payload);
     }
+}
+
+void resetServoRxBuffer() {
+    servoRxLength = 0;
+    servoRxActive = false;
+    servoRxBuffer[0] = '\0';
+}
+
+void flushServoRxBuffer() {
+    if (servoRxActive && millis() - lastServoByteMillis >= 100 && servoRxLength > 2) {
+        servoRxBuffer[servoRxLength] = '\0';
+        processCommand(servoRxBuffer);
+        resetServoRxBuffer();
+    }
+}
+
+void processReceivedPayload(const char* payload) {
+    size_t payloadLength = strlen(payload);
+
+    // Certains emetteurs RF envoient S, :, puis chaque chiffre dans un payload distinct.
+    if (!servoRxActive && payloadLength == 1 && payload[0] == 'S') {
+        servoRxBuffer[0] = 'S';
+        servoRxLength = 1;
+        servoRxActive = true;
+        lastServoByteMillis = millis();
+        return;
+    }
+
+    if (servoRxActive) {
+        bool validContinuation = servoRxLength == 1 ? payload[0] == ':' : true;
+        size_t firstDigit = servoRxLength == 1 ? 1 : 0;
+        for (size_t index = firstDigit; validContinuation && index < payloadLength; ++index) {
+            if (payload[index] < '0' || payload[index] > '9') {
+                validContinuation = false;
+            }
+        }
+
+        if (validContinuation && servoRxLength + payloadLength < sizeof(servoRxBuffer)) {
+            memcpy(servoRxBuffer + servoRxLength, payload, payloadLength);
+            servoRxLength += payloadLength;
+            lastServoByteMillis = millis();
+            return;
+        }
+
+        if (servoRxLength > 2) {
+            servoRxBuffer[servoRxLength] = '\0';
+            processCommand(servoRxBuffer);
+        }
+        resetServoRxBuffer();
+    }
+
+    processCommand(payload);
 }
 
 void handleLedBlink() {
@@ -129,7 +218,7 @@ void setup() {
     radio.startListening();
 
     Serial.println(F("--- Recepteur NRF24 pret ---"));
-    Serial.println(F("Commandes : A (ON), E (OFF), C (Clignotement), T (Surveillance temp >25°C)"));
+    Serial.println(F("Commandes : A (ON), E (OFF), C (Clignotement), T (toggle EnOcean)"));
 }
 
 void loop() {
@@ -149,9 +238,17 @@ void loop() {
             rxBuffer[--bytesReceived] = '\0';
         }
 
-        processCommand(rxBuffer);
+        processReceivedPayload(rxBuffer);
     }
 
     // 2. Gestion non bloquante du mode clignotant
     handleLedBlink();
+    flushServoRxBuffer();
+
+    // Arret de securite si le dernier emetteur ne donne plus signe de vie.
+    if (!servoStoppedByTimeout && millis() - lastServoCommandMillis >= servoCommandTimeout) {
+        servoS3003.detach();
+        servoStoppedByTimeout = true;
+        Serial.println(F("[SERVO ARRET] Signal PWM coupe apres 1 seconde sans trame"));
+    }
 }

@@ -13,6 +13,12 @@
 #define CE_PIN 7
 #define CSN_PIN 8
 char c;
+char serialCommand[16];
+uint8_t serialCommandLength = 0;
+const uint8_t enoceanButtonPattern[] = {0x00, 0x3C, 0x2F, 0x39};
+uint8_t enoceanPatternIndex = 0;
+unsigned long lastEnoceanButtonMillis = 0;
+const unsigned long enoceanButtonDebounce = 300;
 
 RF24 radio(CE_PIN, CSN_PIN);
 
@@ -92,6 +98,71 @@ void sendSCPITemperature(float temp) {
     }
 }
 
+void sendRadioPayload(const char *payload, uint8_t length) {
+    radio.stopListening();
+    bool success = radio.write(payload, length);
+    radio.startListening();
+
+    if (!success) {
+        Serial.println(F(" -> [TX ERR] NACK / Target unreachable"));
+    }
+}
+
+void handleEnoceanByte(uint8_t value) {
+    if (value == enoceanButtonPattern[enoceanPatternIndex]) {
+        ++enoceanPatternIndex;
+        if (enoceanPatternIndex == sizeof(enoceanButtonPattern)) {
+            enoceanPatternIndex = 0;
+            unsigned long now = millis();
+            if (now - lastEnoceanButtonMillis >= enoceanButtonDebounce) {
+                const char toggleCommand = 'T';
+                sendRadioPayload(&toggleCommand, sizeof(toggleCommand));
+                lastEnoceanButtonMillis = now;
+                serialCommandLength = 0;
+                Serial.println(F("[ENOCEAN] Bouton detecte -> [NRF] T"));
+            }
+        }
+    } else {
+        enoceanPatternIndex = value == enoceanButtonPattern[0] ? 1 : 0;
+    }
+}
+
+void processSerialCommand() {
+    serialCommand[serialCommandLength] = '\0';
+
+    if (serialCommandLength >= 3 && serialCommand[0] == 'S' && serialCommand[1] == ':') {
+        int angle = 0;
+        for (uint8_t index = 2; index < serialCommandLength; index++) {
+            if (serialCommand[index] < '0' || serialCommand[index] > '9') {
+                Serial.println(F("[ERR] Format attendu : S:angle (0..180)"));
+                serialCommandLength = 0;
+                return;
+            }
+            angle = angle * 10 + (serialCommand[index] - '0');
+        }
+
+        if (angle > 180) {
+            Serial.println(F("[ERR] Angle servo hors limites (0..180)"));
+            serialCommandLength = 0;
+            return;
+        }
+
+        char payload[8];
+        uint8_t payloadLength = snprintf(payload, sizeof(payload), "S:%d", angle);
+        sendRadioPayload(payload, payloadLength);
+        Serial.print(F("[TX SERVO] "));
+        Serial.println(payload);
+    } else if (serialCommandLength == 1) {
+        c = serialCommand[0];
+        sendRadioPayload(&c, sizeof(c));
+        Serial.println(c);
+    } else if (serialCommandLength > 0) {
+        Serial.println(F("[ERR] Commande inconnue. Utiliser S:angle"));
+    }
+
+    serialCommandLength = 0;
+}
+
 void updateAndDisplaySensors() {
     readAHT(currentTemp, currentHumidity);
     updateAirQuality(currentTemp, currentHumidity, currentECO2, currentTVOC, currentAQI);
@@ -143,13 +214,24 @@ void setup() {
 
 void loop() {
     // 1. Gestion transmission radio sur saisie série
-    if (Serial.available()) {
-        c = Serial.read();
-        Serial.println(c);
+    while (Serial.available()) {
+        uint8_t received = static_cast<uint8_t>(Serial.read());
+        handleEnoceanByte(received);
 
-        radio.stopListening();
-        radio.write(&c, sizeof(char));
-        radio.startListening(); // Rétablit l'écoute après l'envoi
+        if (received > 0x7F || received == 0x00) {
+            continue;
+        }
+
+        if (received == '\n' || received == '\r') {
+            if (received == '\n') {
+                processSerialCommand();
+            }
+        } else if (serialCommandLength < sizeof(serialCommand) - 1) {
+            serialCommand[serialCommandLength++] = received;
+        } else {
+            serialCommandLength = 0;
+            Serial.println(F("[ERR] Commande trop longue"));
+        }
     }
 
     // 2. Gestion non-bloquante de l'affichage des capteurs et de l'envoi SCPI
