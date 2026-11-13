@@ -97,3 +97,49 @@ venv/
 Thumbs.db
 *~
 *.swp
+
+# --- Xilinx Vivado / FPGA ---
+# Keep the Vivado project file, VHDL/Verilog sources, constraints, IP
+# configuration (.xci), block designs (.bd), and project Tcl scripts tracked.
+# The directories and files below are generated locally and can be recreated
+# from the tracked project and sources.
+**/.Xil/
+**/.cache/
+**/.gen/
+**/.hw/
+**/.ip_user_files/
+**/.runs/
+**/.sim/
+**/hw_ila_data/
+**/*.cache/
+**/*.gen/
+**/*.hw/
+**/*.ip_user_files/
+**/*.runs/
+**/*.sim/
+
+# Vivado-generated metadata and logs
+*.jou
+*.str
+*.pb
+*.xpe
+
+# Generated implementation products and reports
+*.bit
+*.bin
+*.mcs
+*.mmi
+*.ltx
+*.dcp
+*.rpt
+*.ckpt
+*.hwdef
+*.ipdef
+
+# Generated simulation and synthesis output
+*.vcd
+*.vpd
+*.svo
+*.srp
+*.srf
+*.xsim

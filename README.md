@@ -107,8 +107,38 @@
 │   │           ├── Emmeteur
 │   │           ├── Recepteur
 │   │           └── TPEnocean
+│   ├── FPGA
+│   │   ├── TP1
+│   │   │   ├── TP1.cache
+│   │   │   │   ├── ip
+│   │   │   │   ├── sim
+│   │   │   │   ├── telemetry
+│   │   │   │   └── wt
+│   │   │   ├── TP1.hw
+│   │   │   │   └── hw_1
+│   │   │   ├── TP1.ioplanning
+│   │   │   │   └── constrs_1
+│   │   │   ├── TP1.ip_user_files
+│   │   │   ├── TP1.runs
+│   │   │   │   ├── impl_1
+│   │   │   │   └── synth_1
+│   │   │   ├── TP1.sim
+│   │   │   │   └── sim_1
+│   │   │   └── TP1.srcs
+│   │   │       ├── constrs_1
+│   │   │       ├── sim_1
+│   │   │       └── sources_1
+│   │   └── TPQ2
+│   │       └── TP1Q2
+│   │           ├── TP1Q2.cache
+│   │           ├── TP1Q2.hw
+│   │           ├── TP1Q2.ip_user_files
+│   │           ├── TP1Q2.sim
+│   │           └── TP1Q2.srcs
 │   ├── java
 │   │   ├── Projet-Java
+│   │   │   ├── Celebrity
+│   │   │   │   └── src
 │   │   │   └── JaList
 │   │   │       ├── src
 │   │   │       └── target
@@ -125,6 +155,6 @@
 ├── LtspiceBUp
 └── Obsidian
 
-124 directories
+154 directories
 ```
 
