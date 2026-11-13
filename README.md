@@ -137,11 +137,10 @@
 │   │           └── TP1Q2.srcs
 │   ├── java
 │   │   ├── Projet-Java
-│   │   │   ├── Celebrity
-│   │   │   │   └── src
+│   │   │   ├── jalist
+│   │   │   │   ├── src
+│   │   │   │   └── target
 │   │   │   └── JaList
-│   │   │       ├── src
-│   │   │       └── target
 │   │   └── TP
 │   │       ├── Hellowrold
 │   │       │   ├── src
@@ -155,6 +154,6 @@
 ├── LtspiceBUp
 └── Obsidian
 
-154 directories
+153 directories
 ```
 
