@@ -108,39 +108,27 @@
 │   │           ├── Recepteur
 │   │           └── TPEnocean
 │   ├── FPGA
-│   │   ├── TP1
-│   │   │   ├── TP1.cache
-│   │   │   │   ├── ip
-│   │   │   │   ├── sim
-│   │   │   │   ├── telemetry
-│   │   │   │   └── wt
-│   │   │   ├── TP1.hw
-│   │   │   │   └── hw_1
-│   │   │   ├── TP1.ioplanning
-│   │   │   │   └── constrs_1
-│   │   │   ├── TP1.ip_user_files
-│   │   │   ├── TP1.runs
-│   │   │   │   ├── impl_1
-│   │   │   │   └── synth_1
-│   │   │   ├── TP1.sim
-│   │   │   │   └── sim_1
-│   │   │   └── TP1.srcs
-│   │   │       ├── constrs_1
-│   │   │       ├── sim_1
-│   │   │       └── sources_1
-│   │   └── TPQ2
-│   │       └── TP1Q2
-│   │           ├── TP1Q2.cache
-│   │           ├── TP1Q2.hw
-│   │           ├── TP1Q2.ip_user_files
-│   │           ├── TP1Q2.sim
-│   │           └── TP1Q2.srcs
+│   │   ├── TP1-FPGA
+│   │   │   ├── TP1
+│   │   │   │   ├── TP1.cache
+│   │   │   │   ├── TP1.hw
+│   │   │   │   ├── TP1.ioplanning
+│   │   │   │   ├── TP1.ip_user_files
+│   │   │   │   ├── TP1.runs
+│   │   │   │   ├── TP1.sim
+│   │   │   │   └── TP1.srcs
+│   │   │   ├── TP1Q3
+│   │   │   │   └── TP1Q3
+│   │   │   └── TPQ2
+│   │   │       └── TP1Q2
+│   │   └── TP2-FPGA
+│   │       ├── TP2Q1-CodageBCD
+│   │       │   └── TP2Q1-CodageBCD
+│   │       ├── TP2Q2-comptsyncmodulo10
+│   │       │   └── TP2Q2-compteurmodulo10
+│   │       └── TP2Q3-comptsyncmodulo16
+│   │           └── TP2Q2-compteurmodulo10
 │   ├── java
-│   │   ├── Projet-Java
-│   │   │   ├── jalist
-│   │   │   │   ├── src
-│   │   │   │   └── target
-│   │   │   └── JaList
 │   │   └── TP
 │   │       ├── Hellowrold
 │   │       │   ├── src
@@ -154,6 +142,6 @@
 ├── LtspiceBUp
 └── Obsidian
 
-153 directories
+141 directories
 ```
 
