@@ -4,7 +4,7 @@
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.                   -->
 <!-- Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.   -->
 
-<Project Product="Vivado" Version="7" Minor="72" Path="/home/Styxie/Documents/ESIEE_EISC/E4/FPGA/TP1Q3/TP1Q3/TP1Q3.xpr">
+<Project Product="Vivado" Version="7" Minor="72" Path="/home/Styxie/Documents/ESIEE_EISC/E4/FPGA/TP1-FPGA/TP1Q3/TP1Q3/TP1Q3.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="990f61db391c4f07a11caa56b370d38a"/>
@@ -133,6 +133,7 @@
         <Option Name="LogicalNoCTop" Val=""/>
         <Option Name="LogicalNoCTopLib" Val=""/>
         <Option Name="Dmv" Val=""/>
+        <Option Name="xsim.simulate.runtime" Val="300ns"/>
       </Config>
     </FileSet>
     <FileSet Name="utils_1" Type="Utils" RelSrcDir="$PSRCDIR/utils_1" RelGenDir="$PGENDIR/utils_1">

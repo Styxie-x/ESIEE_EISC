@@ -94,6 +94,18 @@
 │       └── Reseau
 │           └── EX2
 ├── E4
+│   ├── CapteurCloud
+│   │   └── TP-Capteur-et-acquisition-des-donnees
+│   │       ├── Emmeteur
+│   │       │   ├── include
+│   │       │   ├── lib
+│   │       │   ├── src
+│   │       │   └── test
+│   │       └── Recepteur
+│   │           ├── include
+│   │           ├── lib
+│   │           ├── src
+│   │           └── test
 │   ├── E4Badis
 │   │   └── TP1
 │   │       ├── RF24-ESIPE
@@ -112,7 +124,6 @@
 │   │   │   ├── TP1
 │   │   │   │   ├── TP1.cache
 │   │   │   │   ├── TP1.hw
-│   │   │   │   ├── TP1.ioplanning
 │   │   │   │   ├── TP1.ip_user_files
 │   │   │   │   ├── TP1.runs
 │   │   │   │   ├── TP1.sim
@@ -137,11 +148,41 @@
 │   │           └── demo
 │   ├── MATH_TP
 │   │   └── TP2
+│   ├── TP1-NRF24
+│   │   ├── Emmeteur
+│   │   │   ├── include
+│   │   │   ├── lib
+│   │   │   │   ├── examples
+│   │   │   │   ├── Exo2
+│   │   │   │   ├── Exo3
+│   │   │   │   └── RF24
+│   │   │   ├── src
+│   │   │   └── test
+│   │   ├── Recepteur
+│   │   │   ├── include
+│   │   │   ├── lib
+│   │   │   │   ├── examples
+│   │   │   │   ├── Exo2
+│   │   │   │   ├── Exo3
+│   │   │   │   └── RF24
+│   │   │   ├── src
+│   │   │   └── test
+│   │   └── TPEnocean
+│   │       ├── Emmeteur
+│   │       │   ├── include
+│   │       │   ├── lib
+│   │       │   ├── src
+│   │       │   └── test
+│   │       └── Recepteur
+│   │           ├── include
+│   │           ├── lib
+│   │           ├── src
+│   │           └── test
 │   └── Transmission
 │       └── Circuits_LTSPICE
 ├── LtspiceBUp
 └── Obsidian
 
-141 directories
+182 directories
 ```
 
