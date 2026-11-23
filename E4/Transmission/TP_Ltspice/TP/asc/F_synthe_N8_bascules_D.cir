@@ -1,0 +1,15 @@
+* Synthetiseur PLL avec diviseur par 8 realise avec 3 bascules D (compteur asynchrone)
+* fref = 4 kHz  ->  fvco attendue = 8 x 4 kHz = 32 kHz (VCO 10k..40k)
+V1 clock 0 PULSE(5 0 125u 0.1u 0.1u 125u 250u 1000)
+A2 clock 0 0 0 Q3 0 Scomp 0 XOR
+R1 Sfiltre Scomp 20k
+C1 Sfiltre 0 10n
+A3 Sfiltre 0 0 0 0 0 SQ 0 MODULATOR Space=10k Mark=40k
+A6 SQ 0 0 0 0 0 Svco 0 SCHMITT Vhigh=5 Vlow=0 Vt=0. Vh=0.5 Trise=.1u Tfall=.1u
+* bascule D montee en T : D relie a /Q -> division par 2 a chaque etage
+A4 Q1b 0 Svco 0 0 Q1b Q1 0 DFLOP
+A5 Q2b 0 Q1b 0 0 Q2b Q2 0 DFLOP
+A7 Q3b 0 Q2b 0 0 Q3b Q3 0 DFLOP
+.tran 0 40m 0 0.1u
+.backanno
+.end
