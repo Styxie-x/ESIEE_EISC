@@ -1,69 +1,33 @@
 #include <Widget.h>
 
-Gauge::Gauge(GFXcanvas1 *pcanvas, uint16_t centerX, uint16_t centerY, uint16_t radius)
+Gauge::Gauge(Adafruit_GFX *pdisplay, uint16_t centerX, uint16_t centerY, uint16_t radius)
 {
     _radius = radius;
     _centerX = centerX;
     _centerY = centerY;
-    _canvas = pcanvas;
+    _canvas = pdisplay;
     _temp = 0;
 }
 
 void Gauge ::_drawBackground()
 {
-    float xx = 0;
-    float yy = 0;
-    uint8_t i = 60;
-
-    /* affichage 0 de gauge */
-    _canvas->setCursor(0, 57);
+    _canvas->setCursor(38, 2);
     _canvas->setTextSize(1);
     _canvas->setTextColor(WHITE);
-    _canvas->println(0);
-    /* affichage 0 de gauge */
+    _canvas->print(F("TEMPERATURE"));
 
-    for (double teta = 0.0; teta > -1.0 * PI; teta -= PI / 12.0) // if i use float teta only 0*PI works in the rest numbers are off.
-    {
-        xx = _calculX(_radius, teta);
-        yy = _calculY(_radius, teta);
-
-        if (i < 0)
-        {
-            i = 60;
-        }
-
-        else if (i % 10)
-        {
-            _canvas->drawCircle(xx, yy, 1, WHITE);
-        }
-        else
-        {
-            if (i == 60)
-            {
-                _canvas->setCursor(xx - 8, yy - 8);
-                _canvas->setTextSize(1);
-                _canvas->setTextColor(WHITE);
-                _canvas->println(i);
-            }
-            else
-            {
-                _canvas->setCursor(xx - 3, yy - 4);
-                _canvas->setTextSize(1);
-                _canvas->setTextColor(WHITE);
-                _canvas->println(i);
-            }
-        }
-        i -= 5;
+    // Demi-cercle propre pour la jauge de température.
+    for (uint8_t i = 0; i <= 60; i += 10) {
+        float angle = PI + (PI * i / 60.0f);
+        int16_t x1 = _centerX + (int16_t)(_radius * cos(angle));
+        int16_t y1 = _centerY + (int16_t)(_radius * sin(angle));
+        int16_t x2 = _centerX + (int16_t)((_radius - 5) * cos(angle));
+        int16_t y2 = _centerY + (int16_t)((_radius - 5) * sin(angle));
+        _canvas->drawLine(x1, y1, x2, y2, WHITE);
     }
-    _canvas->fillCircle(_centerX, _centerY - 1, 25, WHITE);
 
-    _canvas->setCursor(_centerX + 6, _centerY - 14);
-    _canvas->setTextSize(1);
-    _canvas->setTextColor(BLACK);
-    _canvas->print((char)247);
-    _canvas->setTextSize(2);
-    _canvas->setCursor(_centerX + 12, _centerY - 14);
-    _canvas->print("C");
+    _canvas->drawCircle(_centerX, _centerY, _radius, WHITE);
+    _canvas->fillCircle(_centerX, _centerY, 4, WHITE);
 }
 
 void Gauge ::draw()
@@ -75,20 +39,22 @@ void Gauge ::draw()
 
 void Gauge ::_drawtemp()
 {
-
     float temp = TEMPERATURE;
+    if (temp < 0.0f) temp = 0.0f;
+    if (temp > 60.0f) temp = 60.0f;
 
-    float angle_s = PI + (PI / 60) * temp;
-    // _canvas->drawLine(_centerX, _centerY, _calculX(_radius, angle_s), _calculY(_radius, angle_s), WHITE);
+    float angle = PI + (PI * temp / 60.0f);
+    _canvas->drawLine(_centerX, _centerY,
+                      _calculX(_radius - 7, angle),
+                      _calculY(_radius - 7, angle), WHITE);
 
-    _canvas->fillTriangle(_calculX(_radius, angle_s), _calculY(_radius, angle_s),
-                          _calculX(5, angle_s + PI / 2), _calculY(5, -angle_s + PI / 2),
-                          _calculX(5, angle_s - PI / 2), _calculY(5, angle_s - PI / 2), WHITE);
-
-    _canvas->setCursor(_centerX + -22, _centerY - 8);
+    _canvas->fillRect(43, 43, 42, 13, BLACK);
+    _canvas->setCursor(44, 45);
+    _canvas->setTextSize(2);
+    _canvas->setTextColor(WHITE);
+    _canvas->print(TEMPERATURE, 1);
     _canvas->setTextSize(1);
-    _canvas->setTextColor(BLACK);
-    _canvas->print(temp, 2);
+    _canvas->print(F(" C"));
 }
 float Gauge ::_calculX(float rayon, float angle)
 {
@@ -99,89 +65,21 @@ float Gauge ::_calculY(float rayon, float angle)
     return _centerY + (rayon * sin(angle));
 }
 
-Gauge_Dewpoint::Gauge_Dewpoint(GFXcanvas1 *pcanvas)
-{
-    _Dewpoint = 0;
-    _canvas = pcanvas;
-}
-
-void Gauge_Dewpoint ::_drawBackground()
-{
-    _canvas->setCursor(43, 0);
-    _canvas->setTextSize(1);
-    _canvas->setTextColor(WHITE);
-    _canvas->print("Dewpoint");
-
-    _canvas->drawRect(9, 10, 110, 15, WHITE);
-
-    _canvas->setRotation(1);
-    for (int i = 0; i <= 50; i += 5)
-    {
-
-        _canvas->setCursor(28, 116 - (11 * (i / 5)));
-        // Position verticale ajustée pour chaque itération       
-        _canvas->setTextSize(1);
-        _canvas->print(String(i)); // Conversion de l'entier en chaîne de caractères pour l'affichage       
-        if (i < 50)
-        {
-            _canvas->drawLine(10, 118 - (11 * (i / 5)), 24, 118 - (11 * (i / 5)), WHITE);
-        }
-    }
-    _canvas->setRotation(0);
-}
-
-void Gauge_Dewpoint ::draw()
-{
-    _canvas->fillScreen(0);
-    _drawBackground();
-    _drawDewpoint();
-}
-
-void Gauge_Dewpoint ::_drawDewpoint()
-{
-    float hum = 0;
-    hum = DEWPOINT;
-
-    int longueur = (index_pixel_Dewpoint)*hum;
-
-    _canvas->fillRect(9, 10, longueur, 15, WHITE);
-
-    _canvas->setCursor(49, 56);
-    _canvas->setTextSize(1);
-    _canvas->setTextColor(WHITE);
-    _canvas->print(hum);
-}
-
-
-Gauge_hum::Gauge_hum(GFXcanvas1 *pcanvas)
+Gauge_hum::Gauge_hum(Adafruit_GFX *pdisplay)
 {
     _hum = 0;
-    _canvas = pcanvas;
+    _canvas = pdisplay;
 }
 
 void Gauge_hum ::_drawBackground()
 {
-    _canvas->setCursor(43, 0);
+    _canvas->setCursor(48, 2);
     _canvas->setTextSize(1);
     _canvas->setTextColor(WHITE);
-    _canvas->print("HUMIDITY");
+    _canvas->print(F("HUMIDITE"));
 
-    _canvas->drawRect(9, 10, 110, 15, WHITE);
-
-    _canvas->setRotation(1);
-    for (int i = 0; i <= 100; i += 10)
-    {
-
-        _canvas->setCursor(28, 116 - (11 * (i / 10)));
-        // Position verticale ajustée pour chaque itération       
-        _canvas->setTextSize(1);
-        _canvas->print(String(i)); // Conversion de l'entier en chaîne de caractères pour l'affichage       
-        if (i < 100)
-        {
-            _canvas->drawLine(10, 118 - (11 * (i / 10)), 24, 118 - (11 * (i / 10)), WHITE);
-        }
-    }
-    _canvas->setRotation(0);
+    // Jauge verticale simple, sans texte secondaire ni marqueurs parasites.
+    _canvas->drawRect(54, 16, 20, 38, WHITE);
 }
 
 void Gauge_hum ::draw()
@@ -193,15 +91,21 @@ void Gauge_hum ::draw()
 
 void Gauge_hum ::_drawhum()
 {
-    float dewpoint = 0;
-    dewpoint = HUMIDITY;
+    float humidity = HUMIDITY;
+    if (humidity < 0.0f) humidity = 0.0f;
+    if (humidity > 100.0f) humidity = 100.0f;
 
-    int longueur = (index_pixel_hum)*dewpoint;
+    int16_t hauteur = (int16_t)(humidity * 36.0f / 100.0f);
+    if (hauteur > 0) {
+        _canvas->fillRect(56, 52 - hauteur, 16, hauteur, WHITE);
+    }
 
-    _canvas->fillRect(9, 10, longueur, 15, WHITE);
-
-    _canvas->setCursor(49, 56);
-    _canvas->setTextSize(1);
+    // Une seule valeur entière, effacée dans une zone fixe avant impression.
+    _canvas->fillRect(78, 30, 48, 18, BLACK);
+    _canvas->setCursor(82, 34);
+    _canvas->setTextSize(2);
     _canvas->setTextColor(WHITE);
-    _canvas->print(dewpoint);
+    _canvas->print((int)(humidity + 0.5f));
+    _canvas->setTextSize(1);
+    _canvas->print(F(" %"));
 }

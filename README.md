@@ -96,7 +96,13 @@
 ├── E4
 │   ├── CapteurCloud
 │   │   └── TP_Capteur
-│   │       └── Capteur
+│   │       ├── Capteur
+│   │       │   ├── Emmeteur
+│   │       │   ├── Photos_Ecran
+│   │       │   ├── Photos_Multimeter
+│   │       │   ├── Photos_Oscillo
+│   │       │   └── Recepteur
+│   │       └── Capteur_V2_nano
 │   │           ├── Emmeteur
 │   │           ├── figures
 │   │           ├── Photos
@@ -186,6 +192,6 @@
 ├── LtspiceBUp
 └── Obsidian
 
-185 directories
+191 directories
 ```
 
